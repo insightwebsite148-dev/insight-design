@@ -41,13 +41,13 @@ export default function AuthStatus() {
             exit={{ opacity: 0, x: -10 }}
             className="flex items-center space-x-4"
           >
-            <div className="flex items-center space-x-3 bg-white/5 pl-4 pr-1 py-1 rounded-full border border-white/10 group cursor-pointer hover:bg-white/10 transition-all">
+            <Link href={isAdmin ? '/admin' : '/profile'} className="flex items-center space-x-3 bg-white/5 pl-4 pr-1 py-1 rounded-full border border-white/10 group cursor-pointer hover:bg-white/10 transition-all">
               <div className="flex flex-col items-end">
                 <span className="text-[9px] font-black uppercase tracking-[0.1em] text-foreground leading-none mb-1 group-hover:text-accent transition-colors">
                   {user.displayName || user.email?.split('@')[0]}
                 </span>
                 <button 
-                  onClick={() => signOut(auth)}
+                  onClick={(e) => { e.preventDefault(); signOut(auth); }}
                   className="text-[8px] font-bold uppercase tracking-[0.2em] text-muted hover:text-red-500 transition-colors"
                 >
                   Logout
@@ -55,12 +55,16 @@ export default function AuthStatus() {
               </div>
 
               <div className="relative">
-                <div className="w-8 h-8 rounded-full bg-primary text-background flex items-center justify-center text-[10px] font-black group-hover:bg-accent transition-all duration-500">
-                  {user.email?.charAt(0).toUpperCase()}
-                </div>
+                {user.photoURL ? (
+                  <img src={user.photoURL} alt="" referrerPolicy="no-referrer" className="w-8 h-8 rounded-full object-cover group-hover:ring-2 group-hover:ring-accent transition-all duration-500" />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-primary text-background flex items-center justify-center text-[10px] font-black group-hover:bg-accent transition-all duration-500">
+                    {user.email?.charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full group-hover:scale-110 transition-transform duration-500" />
               </div>
-            </div>
+            </Link>
 
             {isAdmin && (
               <Link 

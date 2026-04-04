@@ -10,31 +10,31 @@
      Initial values are set to prevent FOUC before DB loads.
      ═══════════════════════════════════════════════════════ */
 
-  /* ── Core Identity (set by ThemeManager) ── */
-  --background: ;
-  --foreground: ;
-  --card: ;
-  --card-foreground: ;
-  --popover: ;
-  --popover-foreground: ;
-  --primary: ;
-  --primary-foreground: ;
-  --secondary: ;
-  --secondary-foreground: ;
-  --muted: ;
-  --muted-foreground: ;
-  --accent: ;
-  --accent-foreground: ;
-  --destructive: ;
-  --destructive-foreground: ;
-  --border: ;
-  --input: ;
-  --ring: ;
-  --chart-1: ;
-  --chart-2: ;
-  --chart-3: ;
-  --chart-4: ;
-  --chart-5: ;
+  /* ── Initial values (overridden by ThemeManager from DB) ── */
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  --primary: #000000;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f4;
+  --secondary-foreground: #000000;
+  --muted: #666666;
+  --muted-foreground: #000000;
+  --accent: #ca8a04;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #ca8a04;
+  --chart-1: #000000;
+  --chart-2: #666666;
+  --chart-3: #ca8a04;
+  --chart-4: #f4f4f4;
+  --chart-5: #ffffff;
   --radius: 0.5rem;
 
   /* Typography Tokens */

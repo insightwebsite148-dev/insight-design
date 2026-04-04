@@ -36,7 +36,7 @@ export default function RegisterPage() {
         createdAt: new Date()
       });
 
-      router.push('/'); 
+      router.push('/profile'); 
     } catch (err: any) {
       console.error(err);
       if (err.code === 'auth/email-already-in-use') {
@@ -67,7 +67,7 @@ export default function RegisterPage() {
         createdAt: new Date()
       }, { merge: true });
 
-      router.push('/');
+      router.push('/profile');
     } catch (err: any) {
       setError('Registration with Google failed.');
     } finally {

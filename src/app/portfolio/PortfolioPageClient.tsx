@@ -16,7 +16,7 @@ export default function PortfolioPageClient({ initialData, initialProjects }: { 
   const [selectedLocation, setSelectedLocation] = useState('All');
 
   const heroData = {
-    heroHeadline: initialData?.heroHeadline || 'أفضل الأعمال',
+    heroHeadline: initialData?.heroHeadline || 'Our Works',
     heroSubheadline: initialData?.heroSubheadline || 'Explore our latest architectural masterpieces and interior designs, crafted with precision and passion.',
     heroImage: initialData?.heroImage || ''
   };

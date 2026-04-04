@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider, db } from '@/lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Lock, Mail, ArrowRight, Eye, EyeOff, Shield, Fingerprint } from 'lucide-react';
+import { Shield, Fingerprint } from 'lucide-react';
 import Link from 'next/link';
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
@@ -16,40 +16,54 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const checkIfAdmin = async (email: string | null): Promise<boolean> => {
+    if (!email) return false;
+    const userEmail = email.toLowerCase();
+    const adminEmails = ADMIN_EMAIL?.split(',').map(e => e.trim().toLowerCase()) || [];
+    
+    if (adminEmails.includes(userEmail)) return true;
+
+    try {
+      const safeId = userEmail.replace(/[^a-zA-Z0-9]/g, '_');
+      const adminDoc = await getDoc(doc(db, 'system_admins', safeId));
+      return adminDoc.exists() && adminDoc.data().role === 'admin';
+    } catch {
+      return false;
+    }
+  };
+
   const handleGoogleLogin = async () => {
     setLoading(true);
     setError('');
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const adminEmails = ADMIN_EMAIL?.split(',').map(e => e.trim().toLowerCase()) || [];
-      const userEmail = result.user.email?.toLowerCase();
+      const user = result.user;
 
-      if (userEmail) {
-        if (adminEmails.includes(userEmail)) {
-          router.push('/admin');
-          return;
-        }
+      // Save user data
+      await setDoc(doc(db, 'users', user.uid), {
+        fullName: user.displayName || 'User',
+        email: user.email,
+        photoURL: user.photoURL || '',
+        lastLogin: new Date(),
+      }, { merge: true });
 
-        const safeId = userEmail.replace(/[^a-zA-Z0-9]/g, '_');
-        const adminDoc = await getDoc(doc(db, 'system_admins', safeId));
-        if (adminDoc.exists() && adminDoc.data().role === 'admin') {
-          router.push('/admin');
-          return;
-        }
-      }
-
-      setError(`Unauthorized: ${userEmail} is not on the admin list.`);
-      setLoading(false);
+      // Route based on role
+      const isAdmin = await checkIfAdmin(user.email);
+      router.push(isAdmin ? '/admin' : '/profile');
     } catch (err: any) {
-      console.error('Google Auth Error:', err);
-      setError('Google Authentication blocked or failed. Please try again.');
+      if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+        // User cancelled — not an error
+      } else if (err.code === 'auth/popup-blocked') {
+        setError('Popup blocked. Please allow popups for this site.');
+      } else {
+        setError('Authentication failed. Please try again.');
+      }
       setLoading(false);
     }
   };
 
   return (
     <div className="auth-page min-h-screen bg-[#060606] flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Background effects */}
       <div className="absolute inset-0 opacity-[0.03]" style={{
         backgroundImage: 'radial-gradient(rgba(255,255,255,.3) 1px, transparent 1px)',
         backgroundSize: '40px 40px'
@@ -59,7 +73,7 @@ export default function LoginPage() {
       
       <div className="w-full max-w-[1100px] grid grid-cols-1 lg:grid-cols-2 gap-0 relative z-10">
         
-        {/* Left — Branding Panel */}
+        {/* Left — Branding */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
@@ -73,37 +87,34 @@ export default function LoginPage() {
               </div>
               <span className="text-[13px] font-black uppercase tracking-[0.3em] text-white/60">Insight</span>
             </div>
-            
             <h2 className="text-5xl font-black text-white uppercase tracking-tight leading-[0.95] mb-6">
-              Admin<br />
-              <span className="text-accent">Dashboard</span>
+              Welcome<br />
+              <span className="text-accent">Back</span>
             </h2>
             <p className="text-sm text-white/30 leading-relaxed max-w-sm">
-              Secure access to your project management system. Login secured exclusively through Google OAuth.
+              Sign in to access your account, view your profile, and explore our exclusive design portfolio.
             </p>
           </div>
-
           <div className="space-y-8">
             <div className="flex items-center gap-4">
               <Fingerprint size={18} className="text-accent/60" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/20">Two-factor ready</span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/20">Secure Authentication</span>
             </div>
             <div className="h-[1px] bg-white/[0.06]" />
             <div className="flex justify-between items-center">
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/15">Encryption: AES-256</span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/15">OAuth 2.0</span>
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/15">v2.1</span>
             </div>
           </div>
         </motion.div>
 
-        {/* Right — Login Form */}
+        {/* Right — Form */}
         <motion.div
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className="bg-white p-10 md:p-14 lg:rounded-r-sm lg:rounded-l-none rounded-sm shadow-2xl relative flex flex-col justify-center"
         >
-          {/* Mobile logo */}
           <div className="flex items-center gap-3 mb-10 lg:hidden">
             <div className="w-8 h-8 bg-accent flex items-center justify-center">
               <Shield size={16} className="text-white" />
@@ -112,27 +123,21 @@ export default function LoginPage() {
           </div>
 
           <div className="mb-14">
-            <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-accent mb-3 block">
-              Access Portal
-            </span>
+            <span className="text-[12px] font-bold uppercase tracking-[0.4em] text-accent mb-3 block">Access Portal</span>
             <h1 className="text-3xl md:text-4xl font-black tracking-tighter uppercase text-primary">Sign In</h1>
           </div>
 
           <div className="space-y-8">
-            {/* Error */}
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-red-50 border border-red-200 px-4 py-3 rounded-sm"
               >
-                <p className="text-red-600 text-[11px] font-bold uppercase tracking-wider">
-                  {error}
-                </p>
+                <p className="text-red-600 text-[11px] font-bold uppercase tracking-wider">{error}</p>
               </motion.div>
             )}
 
-            {/* Google */}
             <button
               type="button"
               onClick={handleGoogleLogin}
@@ -141,8 +146,8 @@ export default function LoginPage() {
             >
               {loading ? (
                 <div className="flex items-center justify-center gap-3 w-full">
-                   <div className="w-5 h-5 border-2 border-primary/30 border-t-accent rounded-full animate-spin" />
-                   <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-primary">Authenticating...</span>
+                  <div className="w-5 h-5 border-2 border-primary/30 border-t-accent rounded-full animate-spin" />
+                  <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-primary">Authenticating...</span>
                 </div>
               ) : (
                 <>
@@ -158,9 +163,15 @@ export default function LoginPage() {
                 </>
               )}
             </button>
+
+            <div className="text-center">
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-primary/30">
+                Don&apos;t have an account?{' '}
+                <Link href="/register" className="text-accent hover:text-accent/80 transition-colors">Register</Link>
+              </p>
+            </div>
           </div>
           
-          {/* Footer */}
           <div className="mt-16 pt-8 border-t border-primary/5 flex flex-col items-center gap-4">
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-primary/15">
               <Shield size={10} />
