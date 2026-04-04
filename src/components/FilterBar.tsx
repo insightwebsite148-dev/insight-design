@@ -123,7 +123,7 @@ export default function FilterBar({
                       `}
                     >
                       <span className="flex items-center gap-2">
-                        {item.level > 0 && <span className="text-accent/30">└</span>}
+                        {item.level > 0 && <span className="w-1.5 h-1.5 rounded-full bg-accent/50" />}
                         {item.name}
                         {item.badge === 'جديد' && (
                           <span className="text-[7px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-black normal-case">NEW</span>

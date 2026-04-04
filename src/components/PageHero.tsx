@@ -93,9 +93,6 @@ export default function PageHero({ title, subtitle, image, height = '60vh', edit
               type="text"
             >
               <div className="flex flex-col items-center justify-center gap-6 mt-10 border-t border-white/10 pt-8 w-full max-w-lg mx-auto">
-                <span className="text-[10px] font-bold text-white/30 tracking-[0.3em] uppercase shrink-0">
-                  Vol. {new Date().getFullYear()}
-                </span>
                 <p className="text-white/70 text-sm md:text-base font-medium max-w-2xl leading-relaxed">
                   {subtitle}
                 </p>

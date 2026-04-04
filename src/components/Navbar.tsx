@@ -70,8 +70,8 @@ export default function Navbar({ initialSettings }: { initialSettings?: any }) {
             logoSize={branding.siteLogoSize}
           />
 
-          {/* Desktop Navigation Cluster */}
-          <div className="hidden lg:flex items-center gap-8 relative z-10">
+          {/* Desktop Navigation — Centered */}
+          <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
             <div className="bg-slate-50 px-6 py-2 rounded-full border border-border/50">
               <NavLinks
                 links={NAV_LINKS}
@@ -80,8 +80,10 @@ export default function Navbar({ initialSettings }: { initialSettings?: any }) {
                 setHoveredLink={setHoveredLink}
               />
             </div>
-            
-            <div className="flex items-center gap-4">
+          </div>
+
+          {/* Right Actions */}
+          <div className="hidden lg:flex items-center gap-4 relative z-20">
               <EditModeToggle />
               <AuthStatus />
               <Link href="/contact">
@@ -93,7 +95,6 @@ export default function Navbar({ initialSettings }: { initialSettings?: any }) {
                   <div className="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
                 </button>
               </Link>
-            </div>
           </div>
 
           {/* Mobile Toggle */}

@@ -28,7 +28,7 @@ export default function BrandLogo({ name, slogan, logo, logoSize = 40 }: BrandLo
                 src={logo} 
                 alt={name} 
                 style={{ height: `${logoSize}px`, maxHeight: '200px' }}
-                className="w-auto object-contain transition-all duration-700 group-hover:scale-105" 
+                className="w-auto object-contain transition-all duration-700 group-hover:scale-105 translate-y-[1.5px]" 
               />
             </EditableWrapper>
             {slogan && (

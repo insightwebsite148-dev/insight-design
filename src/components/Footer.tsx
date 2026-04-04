@@ -152,7 +152,8 @@ export default function Footer({ initialSettings }: FooterProps) {
                       {children.length > 0 && (
                         <ul className="mt-2 ml-4 space-y-2">
                           {children.map((child: any) => (
-                            <li key={child.id}>
+                            <li key={child.id} className="flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-accent/40 shrink-0" />
                               <Link href={`/portfolio?category=${child.name}`} className="text-white/40 hover:text-white transition-all duration-500 text-xs uppercase">
                                 {child.name}
                                 {child.badge === 'جديد' && <span className="ml-2 text-[7px] bg-emerald-500 text-white px-1 py-0.5 rounded-full">NEW</span>}
@@ -212,7 +213,7 @@ export default function Footer({ initialSettings }: FooterProps) {
                   type="email" 
                   placeholder="IDENTITY@OFFICE.COM" 
                   required
-                  className="bg-transparent border-b border-white/10 text-white px-0 py-4 text-[11px] font-bold tracking-[0.2em] focus:border-accent focus:outline-none transition-all w-full placeholder:text-white/20 uppercase"
+                  className="bg-transparent border-b border-white/10 text-white px-4 py-4 text-[11px] font-bold tracking-[0.2em] focus:border-accent focus:outline-none transition-all w-full placeholder:text-white/20 uppercase"
                 />
                 <div className="absolute bottom-0 left-0 w-full h-[1px] bg-accent scale-x-0 group-focus-within:scale-x-100 transition-transform duration-700 origin-left" />
               </div>

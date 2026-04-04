@@ -2,6 +2,10 @@
 
 
 
+* {
+  letter-spacing: 0.15em !important;
+}
+
 :root {
   /* ═══════════════════════════════════════════════════════
      ARCHITECTURAL FOUNDATION — Color System
@@ -10,7 +14,7 @@
      Initial values are set to prevent FOUC before DB loads.
      ═══════════════════════════════════════════════════════ */
 
-  /* ── Initial values (overridden by ThemeManager from DB) ── */
+  /* ── Core Identity (set by ThemeManager) ── */
   --background: #ffffff;
   --foreground: #000000;
   --card: #ffffff;

@@ -78,9 +78,6 @@ export default async function ProjectDetails(
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-[1.05] mb-8">
               {project.title}
             </h1>
-            <p className="text-xl md:text-2xl font-light text-muted leading-relaxed max-w-2xl">
-              {project.description}
-            </p>
           </div>
 
           <div className="w-full lg:w-1/3 grid grid-cols-2 gap-x-8 gap-y-10 border-l border-border pl-10">
