@@ -195,9 +195,9 @@ h6 {
 
 @layer components {
 
-  input,
-  textarea,
-  select {
+  input:not(.auth-page input),
+  textarea:not(.auth-page textarea),
+  select:not(.auth-page select) {
     @apply border-2 border-black bg-white px-4 py-3 outline-none focus:border-accent transition-all font-bold placeholder:text-black/30;
   }
 

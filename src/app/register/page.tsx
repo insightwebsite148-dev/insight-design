@@ -81,7 +81,7 @@ export default function RegisterPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#060606] flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="auth-page min-h-screen bg-[#060606] flex items-center justify-center p-6 relative overflow-hidden">
       <div className="absolute inset-0 opacity-[0.03]" style={{
         backgroundImage: 'radial-gradient(rgba(255,255,255,.3) 1px, transparent 1px)',
         backgroundSize: '40px 40px'
