@@ -10,7 +10,7 @@ export default function MapSection({ initialSettings }: { initialSettings?: any 
   const { settings: globalSettings } = useSettings();
 
   let mapEmbedUrl = globalSettings?.mapEmbedUrl || initialSettings?.mapEmbedUrl || defaultMapEmbedUrl;
-  if (!mapEmbedUrl.includes('embed') && mapEmbedUrl.includes('google.com/maps')) {
+  if (mapEmbedUrl && !mapEmbedUrl.includes('embed')) {
     mapEmbedUrl = defaultMapEmbedUrl;
   }
 

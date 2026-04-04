@@ -45,7 +45,7 @@ export default function ContactPageClient({ initialData, initialSettings }: { in
     schema: s.schema || {}
   };
 
-  if (settings.mapEmbedUrl && !settings.mapEmbedUrl.includes('embed') && settings.mapEmbedUrl.includes('google.com')) {
+  if (settings.mapEmbedUrl && !settings.mapEmbedUrl.includes('embed')) {
     settings.mapEmbedUrl = defaultSettingsValues.mapEmbedUrl;
   }
 
