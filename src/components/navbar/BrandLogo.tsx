@@ -11,7 +11,7 @@ interface BrandLogoProps {
   logoSize?: number;
 }
 
-export default function BrandLogo({ name, slogan, logo, logoSize = 48 }: BrandLogoProps) {
+export default function BrandLogo({ name, slogan, logo, logoSize = 40 }: BrandLogoProps) {
   return (
     <div className="relative group flex items-center gap-4">
       <Link href="/" className="flex items-center gap-4">

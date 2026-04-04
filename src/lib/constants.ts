@@ -1,6 +1,6 @@
 export const DEFAULT_SETTINGS = {
   brandName: 'INSIGHT',
-  brandSlogan: 'Design & Finishing Team',
+  brandSlogan: 'Design | Finishing',
   siteLogo: '', 
   address: 'Cairo, Egypt',
   phone: '+20 123 456 7890',
@@ -8,7 +8,7 @@ export const DEFAULT_SETTINGS = {
   workingHours: 'Sat - Thu: 9 AM - 6 PM',
   footerDescription: 'Insight is a professional design and finishing team dedicated to creating high-quality architectural spaces.',
   heroHeadline: 'Professional\nInterior\nDesign',
-  heroSubheadline: 'Insight Design & Finishing Team',
+  heroSubheadline: 'Insight Design | Finishing Team',
   heroDescription: 'We transform spaces into beautiful environments that reflect your style and needs with expert craftsmanship and precision.',
   heroImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop',
   whatsappNumber: '+20 123 456 7890',

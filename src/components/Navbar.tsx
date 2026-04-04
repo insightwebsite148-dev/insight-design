@@ -30,7 +30,7 @@ export default function Navbar({ initialSettings }: { initialSettings?: any }) {
     name: initialSettings?.brandName || DEFAULT_SETTINGS.brandName,
     slogan: initialSettings?.brandSlogan || DEFAULT_SETTINGS.brandSlogan,
     logo: initialSettings?.siteLogo || DEFAULT_SETTINGS.siteLogo,
-    siteLogoSize: initialSettings?.siteLogoSize || 48
+    siteLogoSize: initialSettings?.siteLogoSize || 40
   }));
   const pathname = usePathname();
 
@@ -40,7 +40,7 @@ export default function Navbar({ initialSettings }: { initialSettings?: any }) {
         name: globalSettings.brandName || DEFAULT_SETTINGS.brandName,
         slogan: globalSettings.brandSlogan || DEFAULT_SETTINGS.brandSlogan,
         logo: globalSettings.siteLogo || DEFAULT_SETTINGS.siteLogo,
-        siteLogoSize: globalSettings.siteLogoSize || 48
+        siteLogoSize: globalSettings.siteLogoSize || 40
       });
     }
   }, [globalSettings]);

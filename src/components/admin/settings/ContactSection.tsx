@@ -1,7 +1,8 @@
 'use client';
 
 import { useAdminLanguage } from '@/context/AdminLanguageContext';
-import { MessageCircle, Globe, Facebook, Instagram } from 'lucide-react';
+import { MessageCircle, Globe, Facebook, Instagram, CheckCircle, AlertTriangle } from 'lucide-react';
+import { toEmbedUrl } from '@/lib/mapUtils';
 
 interface ContactSectionProps {
   settings: any;
@@ -54,13 +55,34 @@ export default function ContactSection({ settings, setSettings }: ContactSection
             <label className={labelClass}>{contact.mapUrl}</label>
             <textarea 
               value={settings.mapEmbedUrl || ''}
-              onChange={(e) => setSettings({...settings, mapEmbedUrl: e.target.value})}
+              onChange={(e) => {
+                const raw = e.target.value;
+                // Auto-convert if user pastes a regular Google Maps URL
+                const embed = toEmbedUrl(raw);
+                if (embed && raw !== embed && !raw.includes('/maps/embed')) {
+                  setSettings({...settings, mapEmbedUrl: embed});
+                } else {
+                  setSettings({...settings, mapEmbedUrl: raw});
+                }
+              }}
               rows={2}
               className={`${inputClass} resize-none`}
             />
-            <p className={`text-[11px] font-medium text-gray-400 mt-1.5 ${lang === 'ar' ? 'text-right' : ''}`}>
-              {contact.mapTip}
-            </p>
+            {settings.mapEmbedUrl ? (
+              toEmbedUrl(settings.mapEmbedUrl) ? (
+                <p className={`text-[11px] font-medium text-emerald-500 mt-1.5 flex items-center gap-1 ${lang === 'ar' ? 'flex-row-reverse text-right' : ''}`}>
+                  <CheckCircle size={12} /> {lang === 'ar' ? 'رابط خريطة صالح ✓' : 'Valid embed URL ✓'}
+                </p>
+              ) : (
+                <p className={`text-[11px] font-medium text-amber-500 mt-1.5 flex items-center gap-1 ${lang === 'ar' ? 'flex-row-reverse text-right' : ''}`}>
+                  <AlertTriangle size={12} /> {lang === 'ar' ? 'استخدم رابط تضمين من Google Maps (يحتوي على /maps/embed)' : 'Use a Google Maps embed URL (contains /maps/embed)'}
+                </p>
+              )
+            ) : (
+              <p className={`text-[11px] font-medium text-gray-400 mt-1.5 ${lang === 'ar' ? 'text-right' : ''}`}>
+                {contact.mapTip}
+              </p>
+            )}
           </div>
           <div className="space-y-5">
             <div>

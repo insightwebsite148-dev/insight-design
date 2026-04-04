@@ -3,16 +3,17 @@
 import { motion } from 'framer-motion';
 import EditableWrapper from './EditableWrapper';
 import { useSettings } from '@/context/SettingsContext';
+import { toEmbedUrl } from '@/lib/mapUtils';
 
 const defaultMapEmbedUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14436.438287612665!2d55.26344933924376!3d25.2014498!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f43343a464551%3A0xd8aa39f2cc833fa7!2sBurj%20Khalifa!5e0!3m2!1sen!2sae!4v1710547600000!5m2!1sen!2sae';
 
 export default function MapSection({ initialSettings }: { initialSettings?: any }) {
   const { settings: globalSettings } = useSettings();
 
-  let mapEmbedUrl = globalSettings?.mapEmbedUrl || initialSettings?.mapEmbedUrl || defaultMapEmbedUrl;
-  if (mapEmbedUrl && !mapEmbedUrl.includes('embed')) {
-    mapEmbedUrl = defaultMapEmbedUrl;
-  }
+  const rawUrl = globalSettings?.mapEmbedUrl || initialSettings?.mapEmbedUrl || '';
+  
+  // Try to convert the URL to an embed URL, or fall back to default
+  const mapEmbedUrl = toEmbedUrl(rawUrl) || defaultMapEmbedUrl;
 
   return (
     <section className="w-full bg-slate-50 border-y border-border overflow-hidden">
@@ -20,7 +21,7 @@ export default function MapSection({ initialSettings }: { initialSettings?: any 
         collection="settings"
         documentId="general"
         field="mapEmbedUrl"
-        value={mapEmbedUrl}
+        value={rawUrl || mapEmbedUrl}
         type="text"
       >
         <motion.div 

@@ -6,6 +6,7 @@ import { Mail, Phone, MapPin, Instagram, Facebook, Send } from 'lucide-react';
 import PageHero from '@/components/PageHero';
 import EditableWrapper from '@/components/EditableWrapper';
 import { useSettings } from '@/context/SettingsContext';
+import { toEmbedUrl } from '@/lib/mapUtils';
 
 const TikTokIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -37,17 +38,14 @@ export default function ContactPageClient({ initialData, initialSettings }: { in
   };
 
   const s = globalSettings || initialSettings || {};
+  const rawMapUrl = s.mapEmbedUrl || defaultSettingsValues.mapEmbedUrl;
   const settings = {
     address: s.address || defaultSettingsValues.address,
     phone: s.phone || defaultSettingsValues.phone,
     email: s.email || defaultSettingsValues.email,
-    mapEmbedUrl: s.mapEmbedUrl || defaultSettingsValues.mapEmbedUrl,
+    mapEmbedUrl: toEmbedUrl(rawMapUrl) || '',
     schema: s.schema || {}
   };
-
-  if (settings.mapEmbedUrl && !settings.mapEmbedUrl.includes('embed')) {
-    settings.mapEmbedUrl = defaultSettingsValues.mapEmbedUrl;
-  }
 
   const [formState, setFormState] = useState({ name: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
