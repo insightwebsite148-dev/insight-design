@@ -28,7 +28,7 @@ export default function NavLinks({ links, pathname, hoveredLink, setHoveredLink 
             className="relative h-10 px-4 flex items-center justify-center group"
           >
             <span 
-              className={`relative z-10 text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 text-center ${
+              className={`relative z-10 text-[12px] font-bold uppercase tracking-[0.15em] transition-all duration-300 text-center ${
                 (hoveredLink ? hoveredLink === link.name : isActive)
                   ? 'text-accent' 
                   : 'text-foreground/60 hover:text-foreground'

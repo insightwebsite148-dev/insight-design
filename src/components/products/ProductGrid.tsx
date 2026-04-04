@@ -64,7 +64,7 @@ export default function ProductGrid({ initialProjects }: { initialProjects?: any
         </EditableWrapper>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-12 w-full">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8 lg:gap-12 w-full">
         {products.map((product: any, index: number) => (
           <motion.div
             key={product.id}

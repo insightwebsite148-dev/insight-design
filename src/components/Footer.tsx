@@ -203,7 +203,7 @@ export default function Footer({ initialSettings }: FooterProps) {
           </div>
  
           <div className="pt-8 border-t border-white/5">
-            <h4 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-8 text-accent italic">Quick Inquiry</h4>
+            <h4 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-8 text-accent">Quick Inquiry</h4>
             <form className="flex flex-col gap-6" onSubmit={(e) => {
               e.preventDefault();
               alert('Connection Initialized. Our team will reach out shortly.');

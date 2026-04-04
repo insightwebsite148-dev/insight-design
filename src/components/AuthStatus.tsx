@@ -43,7 +43,10 @@ export default function AuthStatus() {
           >
             <Link href={isAdmin ? '/admin' : '/profile'} className="flex items-center space-x-3 bg-white/5 pl-4 pr-1 py-1 rounded-full border border-white/10 group cursor-pointer hover:bg-white/10 transition-all">
               <div className="flex flex-col items-end">
-                <span className="text-[9px] font-black uppercase tracking-[0.1em] text-foreground leading-none mb-1 group-hover:text-accent transition-colors">
+                <span 
+                  className="max-w-[80px] md:max-w-[150px] truncate text-[9px] font-black uppercase tracking-[0.1em] text-foreground leading-none mb-1 group-hover:text-accent transition-colors text-right"
+                  title={user.displayName || user.email || ''}
+                >
                   {user.displayName || user.email?.split('@')[0]}
                 </span>
                 <button 
