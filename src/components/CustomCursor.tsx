@@ -8,6 +8,21 @@ export default function CustomCursor() {
   const { settings: config } = useSettings();
   const [isPointer, setIsPointer] = useState(false);
   const [isHidden, setIsHidden] = useState(true);
+  const [accentColor, setAccentColor] = useState('#ca8a04');
+
+  // Read accent color from CSS variable (set by ThemeManager from DB)
+  useEffect(() => {
+    const root = document.documentElement;
+    const readAccent = () => {
+      const accent = getComputedStyle(root).getPropertyValue('--accent').trim();
+      if (accent) setAccentColor(accent);
+    };
+    readAccent();
+    // Re-read when theme changes
+    const observer = new MutationObserver(readAccent);
+    observer.observe(root, { attributes: true, attributeFilter: ['style'] });
+    return () => observer.disconnect();
+  }, []);
 
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
@@ -87,7 +102,6 @@ export default function CustomCursor() {
   return (
     <div 
       className={`fixed inset-0 z-[9999] pointer-events-none select-none ${isHidden ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
-      style={{ mixBlendMode: config.cursorBlend as any }}
     >
       {/* Outer Kinetic Ring - uses spring for smooth trailing */}
       <motion.div
@@ -100,7 +114,7 @@ export default function CustomCursor() {
           width: config.cursorOuterSize ? `${config.cursorOuterSize}px` : '32px',
           height: config.cursorOuterSize ? `${config.cursorOuterSize}px` : '32px',
           borderRadius: getShapeRadius(config.cursorShape),
-          border: `${config.cursorBorderWidth || 1}px solid ${config.cursorOuterColor || '#f25c27'}`,
+          border: `${config.cursorBorderWidth || 1}px solid ${config.cursorOuterColor || accentColor}`,
           opacity: config.cursorOuterOpacity || 0.4,
           scale: isPointer ? (parseFloat(config.cursorHoverScale) || 2.5) : 1,
         }}
@@ -120,7 +134,7 @@ export default function CustomCursor() {
           width: config.cursorInnerSize ? `${config.cursorInnerSize}px` : '6px',
           height: config.cursorInnerSize ? `${config.cursorInnerSize}px` : '6px',
           borderRadius: getShapeRadius(config.cursorShape),
-          backgroundColor: config.cursorInnerColor || '#f25c27',
+          backgroundColor: config.cursorInnerColor || accentColor,
           opacity: config.cursorInnerOpacity || 1,
           scale: isPointer ? 0.5 : 1,
         }}
