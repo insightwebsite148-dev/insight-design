@@ -1,8 +1,9 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { doc, onSnapshot, collection, query, orderBy } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 
 interface SettingsContextType {
   settings: any;
@@ -30,27 +31,42 @@ export const SettingsProvider = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Single global listener for settings
-    const unsubSettings = onSnapshot(doc(db, 'settings', 'general'), (snapshot) => {
-      if (snapshot.exists()) setSettings(snapshot.data());
-    });
+    let unsubSettings: () => void;
+    let unsubCategories: () => void;
+    let unsubProjects: () => void;
 
-    // Single global listener for categories
-    const unsubCategories = onSnapshot(query(collection(db, 'categories'), orderBy('name', 'asc')), (snapshot) => {
-      const cats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setCategories(cats);
-    });
+    // Only subscribe to live real-time updates if an admin is logged in
+    const unsubAuth = onAuthStateChanged(auth, (user) => {
+      // Clean up previous listeners if any
+      if (unsubSettings) unsubSettings();
+      if (unsubCategories) unsubCategories();
+      if (unsubProjects) unsubProjects();
 
-    // Single global listener for projects
-    const unsubProjects = onSnapshot(query(collection(db, 'projects'), orderBy('createdAt', 'desc')), (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setProjects(data);
+      if (user) {
+        setLoading(true);
+        // Admin user logged in: Attach real-time snapshot listeners
+        unsubSettings = onSnapshot(doc(db, 'settings', 'general'), (snapshot) => {
+          if (snapshot.exists()) setSettings(snapshot.data());
+        });
+
+        unsubCategories = onSnapshot(query(collection(db, 'categories'), orderBy('name', 'asc')), (snapshot) => {
+          const cats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setCategories(cats);
+        });
+
+        unsubProjects = onSnapshot(query(collection(db, 'projects'), orderBy('createdAt', 'desc')), (snapshot) => {
+          const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setProjects(data);
+          setLoading(false);
+        });
+      }
     });
 
     return () => {
-      unsubSettings();
-      unsubCategories();
-      unsubProjects();
+      unsubAuth();
+      if (unsubSettings) unsubSettings();
+      if (unsubCategories) unsubCategories();
+      if (unsubProjects) unsubProjects();
     };
   }, []);
 

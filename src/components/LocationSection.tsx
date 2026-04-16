@@ -46,7 +46,7 @@ export default function LocationSection({ initialSettings }: { initialSettings?:
             </a>
           </div>
 
-          <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-10 border-l border-border/30 pl-0 md:pl-16">
+          <div className="flex-1 w-full grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10 border-l border-border/30 pl-0 md:pl-16">
             <div className="space-y-2">
               <div className="flex items-center gap-3 text-accent mb-3">
                 <MapPin size={16} />
@@ -75,7 +75,7 @@ export default function LocationSection({ initialSettings }: { initialSettings?:
                 <h4 className="font-black text-[11px] uppercase tracking-normal">Architecture</h4>
               </div>
               <EditableWrapper collection="settings" documentId="general" field="email" value={settings.email} type="text">
-                <p className="text-xs font-bold uppercase tracking-tight text-primary/80">{settings.email}</p>
+                <p className="text-xs font-bold uppercase tracking-tight text-primary/80 break-all">{settings.email}</p>
               </EditableWrapper>
             </div>
 

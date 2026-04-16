@@ -1,16 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion, useSpring, useMotionValue } from 'framer-motion';
+import { useEffect, useState, useRef } from 'react';
 import { useSettings } from '@/context/SettingsContext';
 
 export default function CustomCursor() {
   const { settings: config } = useSettings();
-  const [isPointer, setIsPointer] = useState(false);
-  const [isHidden, setIsHidden] = useState(true);
   const [accentColor, setAccentColor] = useState('#ca8a04');
+  
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const requestRef = useRef<number>(0);
+  const isHiddenRef = useRef<boolean>(true);
 
-  // Read accent color from CSS variable (set by ThemeManager from DB)
+  // Store target and current coords for interpolation
+  const mouseX = useRef(-100);
+  const mouseY = useRef(-100);
+  const outerX = useRef(-100);
+  const outerY = useRef(-100);
+
+  // Read accent color from CSS variable (set by ThemeManager)
   useEffect(() => {
     const root = document.documentElement;
     const readAccent = () => {
@@ -18,25 +26,23 @@ export default function CustomCursor() {
       if (accent) setAccentColor(accent);
     };
     readAccent();
-    // Re-read when theme changes
     const observer = new MutationObserver(readAccent);
     observer.observe(root, { attributes: true, attributeFilter: ['style'] });
     return () => observer.disconnect();
   }, []);
 
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-
-  // Outer ring uses a soft spring for a trailing effect
-  const outerSpringConfig = { damping: 35, stiffness: 400, restDelta: 0.001 };
-  const outerXSpring = useSpring(cursorX, outerSpringConfig);
-  const outerYSpring = useSpring(cursorY, outerSpringConfig);
-
   useEffect(() => {
+    const isMobile = window.matchMedia('(pointer: coarse)').matches;
+    if (isMobile || !config || config.cursorEnabled === false) return;
+
     const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
-      if (isHidden) setIsHidden(false);
+      mouseX.current = e.clientX;
+      mouseY.current = e.clientY;
+      if (isHiddenRef.current) {
+        isHiddenRef.current = false;
+        if (outerRef.current) outerRef.current.style.opacity = String(config.cursorOuterOpacity || 0.4);
+        if (innerRef.current) innerRef.current.style.opacity = String(config.cursorInnerOpacity || 1);
+      }
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -47,40 +53,64 @@ export default function CustomCursor() {
         target.closest('[role="button"]') ||
         window.getComputedStyle(target).cursor === 'pointer';
       
-      setIsPointer(!!isClickable);
+      const hoverScale = parseFloat(config.cursorHoverScale) || 2.5;
+      if (outerRef.current) outerRef.current.style.transform = `translate(-50%, -50%) scale(${isClickable ? hoverScale : 1})`;
+      if (innerRef.current) innerRef.current.style.transform = `translate(-50%, -50%) scale(${isClickable ? 0.5 : 1})`;
     };
 
-    const handleMouseOut = () => setIsHidden(true);
-    const handleMouseEnter = () => setIsHidden(false);
+    const handleMouseOut = () => {
+      isHiddenRef.current = true;
+      if (outerRef.current) outerRef.current.style.opacity = '0';
+      if (innerRef.current) innerRef.current.style.opacity = '0';
+    };
+    const handleMouseEnter = () => {
+      isHiddenRef.current = false;
+      if (outerRef.current) outerRef.current.style.opacity = String(config.cursorOuterOpacity || 0.4);
+      if (innerRef.current) innerRef.current.style.opacity = String(config.cursorInnerOpacity || 1);
+    };
 
     window.addEventListener('mousemove', moveCursor);
     window.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseleave', handleMouseOut);
     document.addEventListener('mouseenter', handleMouseEnter);
 
+    // Hardware accelerated layout-free animation loop
+    const render = () => {
+      outerX.current += (mouseX.current - outerX.current) * 0.15;
+      outerY.current += (mouseY.current - outerY.current) * 0.15;
+
+      if (outerRef.current) {
+        outerRef.current.style.left = `${outerX.current}px`;
+        outerRef.current.style.top = `${outerY.current}px`;
+      }
+      if (innerRef.current) {
+        innerRef.current.style.left = `${mouseX.current}px`;
+        innerRef.current.style.top = `${mouseY.current}px`;
+      }
+
+      requestRef.current = requestAnimationFrame(render);
+    };
+    requestRef.current = requestAnimationFrame(render);
+
     return () => {
       window.removeEventListener('mousemove', moveCursor);
       window.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseleave', handleMouseOut);
       document.removeEventListener('mouseenter', handleMouseEnter);
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [cursorX, cursorY, isHidden]);
+  }, [config]);
 
-  // Dynamically manage default cursor visibility via style injection
+  // Dynamically manage default cursor visibility
   useEffect(() => {
     const isMobile = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
     const shouldHide = config?.cursorEnabled !== false && !isMobile;
     
     let styleTag: HTMLStyleElement | null = null;
-
     if (shouldHide) {
       styleTag = document.createElement('style');
       styleTag.id = 'dynamic-cursor-hide';
-      styleTag.innerHTML = `
-        * {
-          cursor: none !important;
-        }
-      `;
+      styleTag.innerHTML = `* { cursor: none !important; }`;
       document.head.appendChild(styleTag);
     }
     
@@ -99,44 +129,37 @@ export default function CustomCursor() {
     return '50%';
   };
 
+  const outerSize = config.cursorOuterSize ? `${config.cursorOuterSize}px` : '32px';
+  const innerSize = config.cursorInnerSize ? `${config.cursorInnerSize}px` : '6px';
+
   return (
-    <div 
-      className={`fixed inset-0 z-[9999] pointer-events-none select-none ${isHidden ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
-    >
-      {/* Outer Kinetic Ring - uses spring for smooth trailing */}
-      <motion.div
+    <div className="fixed inset-0 z-[9999] pointer-events-none select-none">
+      <div
+        ref={outerRef}
         className="fixed top-0 left-0"
         style={{
-          x: outerXSpring,
-          y: outerYSpring,
-          translateX: '-50%',
-          translateY: '-50%',
-          width: config.cursorOuterSize ? `${config.cursorOuterSize}px` : '32px',
-          height: config.cursorOuterSize ? `${config.cursorOuterSize}px` : '32px',
-          borderRadius: getShapeRadius(config.cursorShape),
+          width: outerSize,
+          height: outerSize,
+          borderRadius: getShapeRadius(config.cursorShape || 'circle'),
           border: `${config.cursorBorderWidth || 1}px solid ${config.cursorOuterColor || accentColor}`,
-          opacity: config.cursorOuterOpacity || 0.4,
-          scale: isPointer ? (parseFloat(config.cursorHoverScale) || 2.5) : 1,
-        }}
-        transition={{
-          scale: { type: 'spring', stiffness: 300, damping: 20 }
+          opacity: 0,
+          transform: 'translate(-50%, -50%) scale(1)',
+          transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease',
+          willChange: 'left, top, transform'
         }}
       />
-      
-      {/* Inner Precision Dot - follows mouse instantly, no spring */}
-      <motion.div
+      <div
+        ref={innerRef}
         className="fixed top-0 left-0"
         style={{
-          x: cursorX,
-          y: cursorY,
-          translateX: '-50%',
-          translateY: '-50%',
-          width: config.cursorInnerSize ? `${config.cursorInnerSize}px` : '6px',
-          height: config.cursorInnerSize ? `${config.cursorInnerSize}px` : '6px',
-          borderRadius: getShapeRadius(config.cursorShape),
+          width: innerSize,
+          height: innerSize,
+          borderRadius: getShapeRadius(config.cursorShape || 'circle'),
           backgroundColor: config.cursorInnerColor || accentColor,
-          opacity: config.cursorInnerOpacity || 1,
-          scale: isPointer ? 0.5 : 1,
+          opacity: 0,
+          transform: 'translate(-50%, -50%) scale(1)',
+          transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease',
+          willChange: 'left, top, transform'
         }}
       />
     </div>

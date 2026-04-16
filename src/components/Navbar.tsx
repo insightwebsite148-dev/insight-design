@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import AuthStatus from './AuthStatus';
 import BrandLogo from './navbar/BrandLogo';
@@ -21,41 +20,26 @@ const NAV_LINKS = [
   { name: 'Contact us', href: '/contact' }
 ];
 
-export default function Navbar({ initialSettings }: { initialSettings?: any }) {
+export default function Navbar({ initialSettings }: { initialSettings?: Record<string, string | number | boolean | null | undefined | object> }) {
   const { settings: globalSettings } = useSettings();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [branding, setBranding] = useState(() => ({
-    name: initialSettings?.brandName || DEFAULT_SETTINGS.brandName,
-    slogan: initialSettings?.brandSlogan || DEFAULT_SETTINGS.brandSlogan,
-    logo: initialSettings?.siteLogo || DEFAULT_SETTINGS.siteLogo,
-    siteLogoSize: initialSettings?.siteLogoSize || 40
-  }));
+  const [prevPath, setPrevPath] = useState<string | null>(null);
+  const activeSettings = globalSettings && Object.keys(globalSettings).length > 0 ? globalSettings : initialSettings || {};
+  
+  const branding = {
+    name: activeSettings.brandName || DEFAULT_SETTINGS.brandName,
+    slogan: activeSettings.brandSlogan || DEFAULT_SETTINGS.brandSlogan,
+    logo: activeSettings.siteLogo || DEFAULT_SETTINGS.siteLogo,
+    siteLogoSize: Number(activeSettings.siteLogoSize) || 40
+  };
+  
   const pathname = usePathname();
 
-  useEffect(() => {
-    if (globalSettings) {
-      setBranding({
-        name: globalSettings.brandName || DEFAULT_SETTINGS.brandName,
-        slogan: globalSettings.brandSlogan || DEFAULT_SETTINGS.brandSlogan,
-        logo: globalSettings.siteLogo || DEFAULT_SETTINGS.siteLogo,
-        siteLogoSize: globalSettings.siteLogoSize || 40
-      });
-    }
-  }, [globalSettings]);
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  useEffect(() => {
+  if (pathname !== prevPath) {
     setIsMobileMenuOpen(false);
-  }, [pathname]);
+    setPrevPath(pathname);
+  }
 
   if (pathname?.startsWith('/admin')) return null;
 
@@ -70,8 +54,8 @@ export default function Navbar({ initialSettings }: { initialSettings?: any }) {
             logoSize={branding.siteLogoSize}
           />
 
-          {/* Desktop Navigation — Centered */}
-          <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+          {/* Desktop Navigation — Flex Centered */}
+          <div className="hidden xl:flex flex-1 justify-center z-10 px-4">
             <div className="bg-slate-50 px-6 py-2 rounded-full border border-border/50">
               <NavLinks
                 links={NAV_LINKS}
@@ -83,7 +67,7 @@ export default function Navbar({ initialSettings }: { initialSettings?: any }) {
           </div>
 
           {/* Right Actions */}
-          <div className="hidden lg:flex items-center gap-4 relative z-20">
+          <div className="hidden xl:flex items-center gap-4 relative z-20 shrink-0">
               <EditModeToggle />
               <AuthStatus />
               <Link href="/contact">
@@ -98,7 +82,7 @@ export default function Navbar({ initialSettings }: { initialSettings?: any }) {
           </div>
 
           {/* Mobile Toggle */}
-          <div className="flex items-center gap-4 lg:hidden">
+          <div className="flex items-center gap-4 xl:hidden">
             <EditModeToggle />
             <AuthStatus />
             <button
@@ -113,7 +97,7 @@ export default function Navbar({ initialSettings }: { initialSettings?: any }) {
         </div>
       </nav>
 
-      <MobileMenu isOpen={isMobileMenuOpen} links={NAV_LINKS} />
+      <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} links={NAV_LINKS} />
     </div>
   );
 }
