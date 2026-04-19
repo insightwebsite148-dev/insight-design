@@ -38,10 +38,10 @@ export default function Footer({ initialSettings }: FooterProps) {
   ].filter(link => link.url);
  
   return (
-    <footer className="bg-[#0A0A0A] text-white pt-32 pb-16 px-8 border-t border-accent/10">
-      <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-24 mb-32">
+    <footer className="bg-[#0A0A0A] text-white pt-20 md:pt-32 pb-10 md:pb-16 px-6 md:px-8 border-t border-accent/10">
+      <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16 lg:gap-24 mb-16 md:mb-32">
         {/* Brand Column */}
-        <div className="flex flex-col space-y-10">
+        <div className="flex flex-col space-y-8 md:space-y-10">
           <Link href="/" className="flex items-center gap-3 group">
             {settings.siteLogo ? (
               <EditableWrapper
@@ -126,7 +126,7 @@ export default function Footer({ initialSettings }: FooterProps) {
  
         {/* Studio Navigation */}
         <div>
-          <h4 className="text-[12px] font-bold uppercase tracking-[0.3em] mb-12 text-accent">Studio Navigation</h4>
+          <h4 className="text-[12px] font-bold uppercase tracking-[0.3em] mb-8 md:mb-12 text-accent">Studio Navigation</h4>
           <ul className="space-y-6 text-sm">
             <li><Link href="/" className="text-white/50 hover:text-white transition-all duration-500 luxury-underline uppercase">Architecture</Link></li>
             <li><Link href="/about" className="text-white/50 hover:text-white transition-all duration-500 luxury-underline uppercase">The Studio</Link></li>
@@ -137,7 +137,7 @@ export default function Footer({ initialSettings }: FooterProps) {
  
         {/* Expertise / Services */}
         <div>
-          <h4 className="text-[12px] font-bold uppercase tracking-[0.3em] mb-12 text-accent">Our Expertise</h4>
+          <h4 className="text-[12px] font-bold uppercase tracking-[0.3em] mb-8 md:mb-12 text-accent">Our Expertise</h4>
           <ul className="space-y-4 text-sm">
             {categories.length > 0 ? (
               (() => {
@@ -180,7 +180,7 @@ export default function Footer({ initialSettings }: FooterProps) {
         </div>
  
         {/* Social Presence */}
-        <div className="space-y-12">
+        <div className="space-y-10 md:space-y-12">
           <div>
             <h4 className="text-[11px] font-bold uppercase tracking-[0.3em] mb-8 text-accent">Social Presence</h4>
             <div className="flex gap-4">
@@ -229,9 +229,9 @@ export default function Footer({ initialSettings }: FooterProps) {
         </div>
       </div>
  
-      <div className="max-w-[1600px] mx-auto pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[11px] font-medium tracking-[0.2em] text-white/30 gap-8">
-        <span className="uppercase font-bold">&copy; {new Date().getFullYear()} {settings.brandName || 'INSIGHT'} &mdash; Architectural Excellence</span>
-        <div className="flex space-x-12">
+      <div className="max-w-[1600px] mx-auto pt-8 md:pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-center md:text-left text-[11px] font-medium tracking-[0.2em] text-white/30 gap-6 md:gap-8">
+        <span className="uppercase font-bold leading-relaxed">&copy; {new Date().getFullYear()} {settings.brandName || 'INSIGHT'} &mdash; Architectural Excellence</span>
+        <div className="flex gap-6 md:gap-12 justify-center w-full md:w-auto">
           <Link href="/privacy" className="hover:text-accent transition-all duration-500 uppercase">Privacy Policy</Link>
           <Link href="/terms" className="hover:text-accent transition-all duration-500 uppercase">Terms</Link>
         </div>

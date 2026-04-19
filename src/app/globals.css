@@ -27,16 +27,16 @@
   --secondary-foreground: #000000;
   --muted: #666666;
   --muted-foreground: #000000;
-  --accent: #ca8a04;
+  --accent: #f25c27;
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   --border: #e5e5e5;
   --input: #e5e5e5;
-  --ring: #ca8a04;
+  --ring: #f25c27;
   --chart-1: #000000;
   --chart-2: #666666;
-  --chart-3: #ca8a04;
+  --chart-3: #f25c27;
   --chart-4: #f4f4f4;
   --chart-5: #ffffff;
   --radius: 0.5rem;
@@ -217,7 +217,7 @@ h6 {
   --secondary: #F4F4F4;
   --muted: #64748b;
   --muted-foreground: #94a3b8;
-  --accent: #C5A059;
+  --accent: #f25c27;
   --border: #e2e8f0;
   --input: #f1f5f9;
   --card: #FFFFFF;
@@ -269,8 +269,8 @@ h6 {
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
-  --admin-accent: #C5A059;
-  --admin-accent-soft: rgba(197, 160, 89, 0.1);
+  --admin-accent: #f25c27;
+  --admin-accent-soft: rgba(242, 92, 39, 0.1);
   --admin-dark: #0F0F0F;
   --admin-toolbar-z: 2147483647;
 }
@@ -299,7 +299,7 @@ body[data-edit-mode="true"] {
 .editable-wrapper.editable-hovered {
   outline: 2px dashed var(--admin-accent-soft);
   outline-offset: 4px;
-  background-color: rgba(197, 160, 89, 0.03);
+  background-color: rgba(242, 92, 39, 0.03);
   cursor: pointer;
 }
 
@@ -475,7 +475,7 @@ body[data-edit-mode="true"] {
   border-radius: 16px;
   box-shadow:
     0 -4px 32px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(197, 160, 89, 0.1),
+    0 0 0 1px rgba(242, 92, 39, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
   pointer-events: auto;
 }
@@ -495,14 +495,14 @@ body[data-edit-mode="true"] {
 }
 
 .publish-bar-indicator.has-changes {
-  background: #C5A059;
-  box-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
+  background: #f25c27;
+  box-shadow: 0 0 10px rgba(242, 92, 39, 0.5);
   animation: pulse-gold 2s infinite;
 }
 
 @keyframes pulse-gold {
-  0%, 100% { box-shadow: 0 0 6px rgba(197, 160, 89, 0.3); }
-  50% { box-shadow: 0 0 16px rgba(197, 160, 89, 0.7); }
+  0%, 100% { box-shadow: 0 0 6px rgba(242, 92, 39, 0.3); }
+  50% { box-shadow: 0 0 16px rgba(242, 92, 39, 0.7); }
 }
 
 .publish-bar-info {
@@ -559,7 +559,7 @@ body[data-edit-mode="true"] {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #C5A059;
+  color: #f25c27;
   font-family: 'Inter', sans-serif;
 }
 
@@ -622,16 +622,16 @@ body[data-edit-mode="true"] {
 }
 
 .publish-bar-btn.publish {
-  background: linear-gradient(135deg, #C5A059, #D4AF37);
+  background: linear-gradient(135deg, #f25c27, #d64f20);
   color: #000;
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  box-shadow: 0 4px 16px rgba(197, 160, 89, 0.3);
+  box-shadow: 0 4px 16px rgba(242, 92, 39, 0.3);
 }
 
 .publish-bar-btn.publish:hover {
-  box-shadow: 0 6px 24px rgba(197, 160, 89, 0.5);
+  box-shadow: 0 6px 24px rgba(242, 92, 39, 0.5);
   transform: translateY(-1px);
 }
 

@@ -32,9 +32,9 @@ export const DEFAULT_THEME = {
   foreground: '#000000',        // Black
   primary: '#050505',           // Deep Black
   primaryForeground: '#ffffff', // White
-  accent: '#b45309',            // Your Bronze/Accent color
+  accent: '#f25c27',            // Brand Orange
   accentForeground: '#ffffff',  // White
-  accentHover: '#92400e',
+  accentHover: '#d64f20',       // Dark Orange
   surface: '#fcfcfc',           // Pure near-white (no gray)
   surfaceAlt: '#f8f8f8',        // Pure light surface
   card: '#ffffff',
@@ -43,8 +43,8 @@ export const DEFAULT_THEME = {
   mutedForeground: 'rgba(0,0,0,0.6)', 
   border: 'rgba(0,0,0,0.08)',   // Transparent border
   borderHover: 'rgba(0,0,0,0.15)',
-  ring: '#b45309',
+  ring: '#f25c27',
   success: '#000000',           // Replaced green with black for contrast
   danger: '#000000',            // Replaced red with black
-  warning: '#b45309',           // Using accent for warning
+  warning: '#f25c27',           // Brand accent for warning
 };

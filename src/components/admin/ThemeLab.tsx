@@ -8,13 +8,23 @@ import TypographyLab from './settings/TypographyLab';
 import ColorGrid from './theme/ColorGrid';
 
 const defaultTheme: Record<string, string> = {
-  background: '#ffffff', foreground: '#000000', 
+  background: '#ffffff', foreground: '#000000',
   primary: '#000000', primaryForeground: '#ffffff',
-  accent: '#ca8a04', 
-  surface: '#ffffff', surfaceAlt: '#fcfcfc', 
+  accent: '#f25c27', accentForeground: '#ffffff', accentHover: '#d64f20',
+  surface: '#ffffff', surfaceAlt: '#fcfcfc',
   card: '#ffffff', cardForeground: '#000000',
   muted: '#000000', mutedForeground: '#000000',
-  border: '#000000', ring: '#f25c27',
+  border: '#000000', borderHover: '#000000', ring: '#f25c27', input: '#e8e8e8',
+  success: '#000000', danger: '#000000', warning: '#f25c27',
+  destructive: '#ef4444', destructiveForeground: '#ffffff',
+  popover: '#ffffff', popoverForeground: '#000000',
+  secondary: '#f4f4f4', secondaryForeground: '#000000',
+};
+
+const defaultTypo = {
+  headlineFont: 'Montserrat', headlineWeight: '700',
+  bodyFont: 'Montserrat', bodyWeight: '400',
+  heroFontSize: '', sectionFontSize: '', bodyFontSize: '', headlineFontSize: '',
 };
 
 import { useAdminLanguage } from '@/context/AdminLanguageContext';
@@ -23,11 +33,7 @@ export default function ThemeLab() {
   const { lang, t } = useAdminLanguage();
   const themeT = t.theme;
   const [theme, setTheme] = useState(defaultTheme);
-  const [typoSettings, setTypoSettings] = useState({
-    headlineFont: 'Montserrat', headlineWeight: '700',
-    bodyFont: 'Montserrat', bodyWeight: '400',
-    heroFontSize: '', sectionFontSize: '', bodyFontSize: '', headlineFontSize: '',
-  });
+  const [typoSettings, setTypoSettings] = useState(defaultTypo);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -82,6 +88,7 @@ export default function ThemeLab() {
   const handleReset = () => {
     if (confirm(themeT.resetConfirm)) {
       setTheme(defaultTheme);
+      setTypoSettings(defaultTypo);
     }
   };
 

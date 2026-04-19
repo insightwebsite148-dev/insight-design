@@ -45,8 +45,8 @@ export default function SliderItem({
             <span className="px-3 py-1.5 border border-accent/50 rounded-full cursor-default">
               Architectural Vision
             </span>
-            <span className="w-1 h-1 bg-border rounded-full" />
-            <span className="text-muted/60">Insight Studio</span>
+            <span className="w-1 h-1 bg-primary/50 rounded-full" />
+            <span className="text-primary/70">Insight Studio</span>
           </motion.div>
 
           <motion.div variants={fadeUp(0.02)}>
@@ -65,7 +65,7 @@ export default function SliderItem({
 
           <motion.div
             variants={fadeUp(0.04)}
-            className="flex items-center text-muted/70 text-[11px] mb-8 gap-3"
+            className="flex items-center text-primary/80 text-[11px] mb-8 gap-3"
           >
             <MapPin size={14} className="text-accent shrink-0" />
             <EditableWrapper
@@ -89,7 +89,7 @@ export default function SliderItem({
               value={settings.heroDescription || DEFAULT_SETTINGS.heroDescription}
               type="text"
             >
-              <p className="text-sm text-muted/60 leading-[1.8] mb-10 max-w-sm font-light line-clamp-4">
+              <p className="text-sm text-primary/80 leading-[1.8] mb-10 max-w-sm font-normal line-clamp-4">
                 {settings.heroDescription || DEFAULT_SETTINGS.heroDescription}
               </p>
             </EditableWrapper>

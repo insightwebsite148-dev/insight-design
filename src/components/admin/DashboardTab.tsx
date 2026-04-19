@@ -55,9 +55,17 @@ export default function DashboardOverview() {
 
   return (
     <div className={`space-y-12 ${lang === 'ar' ? 'font-sans text-right' : ''}`}>
-      <div className="border-b border-border pb-8">
-        <h3 className="text-3xl font-black tracking-tighter uppercase leading-none mb-3">{title}</h3>
-        <p className="text-[11px] font-bold uppercase tracking-[0.4em] text-accent/80 italic max-w-2xl">{subtitle}</p>
+      <div className="border-b border-border pb-8 flex items-start gap-6">
+        <div className="flex items-end gap-1 h-8 mt-1">
+          <motion.div animate={{ height: ['40%', '100%', '40%'] }} transition={{ repeat: Infinity, duration: 1, ease: 'easeInOut' }} className="w-2 bg-accent rounded-t-sm" />
+          <motion.div animate={{ height: ['80%', '30%', '80%'] }} transition={{ repeat: Infinity, duration: 1.2, ease: 'easeInOut' }} className="w-2 bg-emerald-500 rounded-t-sm" />
+          <motion.div animate={{ height: ['50%', '90%', '50%'] }} transition={{ repeat: Infinity, duration: 0.8, ease: 'easeInOut' }} className="w-2 bg-accent rounded-t-sm" />
+          <motion.div animate={{ height: ['30%', '100%', '30%'] }} transition={{ repeat: Infinity, duration: 1.1, ease: 'easeInOut' }} className="w-2 bg-blue-500 rounded-t-sm" />
+        </div>
+        <div>
+          <h3 className="text-3xl font-black tracking-tighter uppercase leading-none mb-3">{title}</h3>
+          <p className="text-[11px] font-bold uppercase tracking-[0.4em] text-accent/80 italic max-w-2xl">{subtitle}</p>
+        </div>
       </div>
 
       <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12`}>

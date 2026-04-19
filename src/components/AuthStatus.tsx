@@ -86,13 +86,13 @@ export default function AuthStatus() {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}
-            className="flex items-center space-x-8"
+            className="flex items-center space-x-4 md:space-x-8"
           >
             <Link 
               href="/login" 
               className="group relative overflow-hidden block"
             >
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70 group-hover:text-primary transition-colors">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/70 group-hover:text-primary transition-colors whitespace-nowrap">
                 Sign In
               </span>
               <motion.div 
@@ -101,7 +101,7 @@ export default function AuthStatus() {
             </Link>
             <Link 
               href="/register" 
-              className="relative group overflow-hidden bg-primary text-background px-8 py-3.5 text-[9px] font-black uppercase tracking-[0.3em] rounded-sm transition-all duration-500 active:scale-95 hover:shadow-2xl hover:shadow-primary/20 flex items-center justify-center min-w-[160px]"
+              className="hidden md:flex relative group overflow-hidden bg-primary text-background px-8 py-3.5 text-[9px] font-black uppercase tracking-[0.3em] rounded-sm transition-all duration-500 active:scale-95 hover:shadow-2xl hover:shadow-primary/20 items-center justify-center min-w-[160px]"
             >
               <div className="absolute inset-0 bg-accent translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500" />
               <span className="relative z-10 text-center w-full">Partner With Us</span>

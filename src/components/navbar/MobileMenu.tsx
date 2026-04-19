@@ -50,11 +50,26 @@ export default function MobileMenu({ isOpen, onClose, links }: MobileMenuProps) 
                     <Link 
                       href={link.href}
                       className="text-4xl font-semibold tracking-tight text-primary hover:text-accent transition-colors duration-300 block"
+                      onClick={onClose}
                     >
                       {link.name}
                     </Link>
                   </motion.div>
                 ))}
+                <motion.div
+                  initial={{ x: 30, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.1 * links.length + 0.2, duration: 0.6 }}
+                  className="mt-4"
+                >
+                  <Link
+                    href="/register"
+                    className="inline-block bg-primary text-background px-8 py-4 text-[11px] font-black uppercase tracking-[0.3em] rounded-sm active:scale-95 transition-all"
+                    onClick={onClose}
+                  >
+                    Partner With Us
+                  </Link>
+                </motion.div>
               </nav>
             </div>
 

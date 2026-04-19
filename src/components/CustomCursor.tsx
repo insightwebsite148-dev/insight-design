@@ -5,7 +5,7 @@ import { useSettings } from '@/context/SettingsContext';
 
 export default function CustomCursor() {
   const { settings: config } = useSettings();
-  const [accentColor, setAccentColor] = useState('#ca8a04');
+  const [accentColor, setAccentColor] = useState('#f25c27');
   
   const outerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);

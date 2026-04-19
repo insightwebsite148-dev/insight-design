@@ -26,12 +26,12 @@ export const EDIT_MODE_Z_INDEX = {
 };
 
 export const PRESET_COLORS = [
-  '#C5A059', // Brand Gold
+  '#f25c27', // Brand Orange
   '#000000', // Pure Black
   '#FFFFFF', // Pure White
   '#F3F0EB', // Off White/Paper
   '#1A1A1A', // Soft Black
-  '#8B7355', // Dark Gold
+  '#d64f20', // Dark Orange
   '#333333', // Dark Gray
   '#666666', // Medium Gray
   '#999999', // Light Gray
