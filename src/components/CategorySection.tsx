@@ -6,8 +6,10 @@ import Link from 'next/link';
 import { ArrowRight, Layers, Sparkles, Clock } from 'lucide-react';
 import { getOptimizedUrl } from '@/lib/cloudinary';
 import { useSettings } from '@/context/SettingsContext';
+import { useMemo } from 'react';
 
-// Build tree from flat categories
+// ─── Tree Utilities ───────────────────────────────────────────────
+
 function buildTree(items: any[]): any[] {
   const map: Record<string, any> = {};
   const roots: any[] = [];
@@ -22,7 +24,6 @@ function buildTree(items: any[]): any[] {
   return roots;
 }
 
-// Collect all descendant names for project matching
 function getAllDescendantNames(node: any): string[] {
   let names = [node.name?.toString().trim().toUpperCase()];
   if (node.children) {
@@ -33,229 +34,257 @@ function getAllDescendantNames(node: any): string[] {
   return names;
 }
 
-export default function CategorySection() {
-  const { categories, projects } = useSettings();
-  if (!categories || categories.length === 0 || !projects) return null;
+// ─── Child Category Card ──────────────────────────────────────────
 
-  const tree = buildTree(categories);
-
-  // All project images as fallback pool
-  const allImages = projects
-    .map((p: any) => p.image || (p.images && p.images[0]))
-    .filter(Boolean);
+function ChildCard({ child, projects, index }: { child: any; projects: any[]; index: number }) {
+  const childNames = getAllDescendantNames(child);
+  const childProjects = projects.filter((p: any) => childNames.includes(p.category?.toString().trim().toUpperCase()));
+  const heroProject = childProjects[0];
+  const heroImage = heroProject?.image || (heroProject?.images && heroProject.images[0]) || '';
+  const isDisabled = child.badge === 'قريباً';
 
   return (
-    <section className="bg-[#060606] py-32 px-6 overflow-hidden relative">
-      {/* Subtle dot pattern */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{
-        backgroundImage: 'radial-gradient(rgba(255,255,255,.4) 1px, transparent 1px)',
-        backgroundSize: '32px 32px'
-      }} />
-      
-      <div className="max-w-[1400px] mx-auto w-full relative z-10">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-10">
-          <div className="max-w-2xl">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="flex items-center gap-4 mb-5"
-            >
-              <span className="h-[1px] w-12 bg-accent" />
-              <span className="text-[12px] font-bold uppercase tracking-[0.5em] text-accent">
-                Our Services
-              </span>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-[0.9] text-white">
-                Browse<br />
-                <span className="text-accent">Collections</span>
-              </h2>
-            </motion.div>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.7, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {isDisabled ? (
+        <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-slate-100 cursor-not-allowed">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+            <Layers size={32} className="text-slate-300" />
+            <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">{child.name}</span>
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[8px] font-black uppercase bg-amber-100 text-amber-600 rounded-full">
+              <Clock size={8} /> SOON
+            </span>
           </div>
-          <Link href="/portfolio" className="group">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="relative h-14 px-12 overflow-hidden flex items-center justify-center gap-4 text-[11px] font-bold uppercase tracking-[0.3em] border border-white/20 text-white/80 hover:text-white transition-all duration-700"
-            >
-              <div className="absolute inset-0 bg-accent -translate-x-full group-hover:translate-x-0 transition-transform duration-700 ease-[0.16,1,0.3,1]" />
-              <span className="relative z-10">View All Works</span>
-              <ArrowRight size={16} className="relative z-10 group-hover:translate-x-2 transition-transform duration-700" />
-            </motion.div>
-          </Link>
         </div>
+      ) : (
+        <Link href={`/category/${encodeURIComponent(child.name)}`} className="group block">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-[#0a0a0a]">
+            {heroImage ? (
+              <Image
+                src={getOptimizedUrl(heroImage, 600)}
+                alt={child.name}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover transition-all duration-[1.2s] ease-[0.16,1,0.3,1] group-hover:scale-105"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
+                <Layers size={32} className="text-slate-200" />
+              </div>
+            )}
+            {/* Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
-        {/* Root Categories */}
-        <div className="space-y-6">
-          {tree.map((rootCat, rootIndex) => {
-            // Match projects to this root + all descendants
-            const allNames = getAllDescendantNames(rootCat);
-            const rootProjects = projects.filter((p: any) => {
-              const pCat = p.category?.toString().trim().toUpperCase();
-              return allNames.includes(pCat);
-            });
-            
-            // Pick image: matched project > recommended > any project (fallback)
-            const heroProject = rootProjects.find((p: any) => p.isRecommended) || rootProjects[0];
-            let heroImage = heroProject?.image || (heroProject?.images && heroProject.images[0]);
-            
-            // FALLBACK: use any project image if nothing matched
-            if (!heroImage && allImages.length > 0) {
-              heroImage = allImages[rootIndex % allImages.length];
-            }
+            {/* Badge */}
+            {child.badge === 'جديد' && (
+              <div className="absolute top-3 right-3 z-10">
+                <span className="inline-flex items-center gap-1 px-2 py-1 text-[8px] font-black uppercase bg-emerald-500 text-white rounded-full shadow-lg">
+                  <Sparkles size={8} /> NEW
+                </span>
+              </div>
+            )}
 
-            const hasChildren = rootCat.children && rootCat.children.length > 0;
+            {/* Bottom info */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+              <h4 className="text-white text-sm font-bold uppercase tracking-wide mb-1 group-hover:text-accent transition-colors duration-500">
+                {child.name}
+              </h4>
+              <div className="flex items-center justify-between">
+                <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest">
+                  {childProjects.length} {childProjects.length === 1 ? 'Project' : 'Projects'}
+                </span>
+                <ArrowRight size={14} className="text-white/0 group-hover:text-accent transition-all duration-500 group-hover:translate-x-1" />
+              </div>
+            </div>
+          </div>
+        </Link>
+      )}
+    </motion.div>
+  );
+}
 
-            return (
-              <motion.div
-                key={rootCat.id}
-                initial={{ opacity: 0, y: 60 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 1, delay: rootIndex * 0.12, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <div className={`grid grid-cols-1 lg:grid-cols-5 gap-0 group relative overflow-hidden rounded-sm border border-white/[0.06] hover:border-accent/20 transition-colors duration-700`}>
-                  
-                  {/* Image Side — 3 cols */}
-                  <div className={`relative h-[350px] lg:h-[480px] lg:col-span-3 overflow-hidden ${rootIndex % 2 === 1 ? 'lg:order-2' : ''}`}>
-                    {heroImage ? (
-                      <Image
-                        src={getOptimizedUrl(heroImage, 1200)}
-                        alt={rootCat.name}
-                        fill
-                        sizes="(max-width: 1024px) 100vw, 60vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center bg-white/5">
-                        <Layers size={80} className="text-white/10" />
-                      </div>
-                    )}
-                    
-                    {/* Gradient towards content side */}
-                    <div className={`absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#060606] via-[#060606]/40 to-transparent ${rootIndex % 2 === 1 ? 'lg:bg-gradient-to-l' : 'lg:bg-gradient-to-r'}`} />
-                    
-                    {/* Floating category name on image */}
-                    <div className="absolute bottom-6 left-6 z-10 lg:hidden">
-                      <h3 className="text-3xl font-black text-white uppercase tracking-tight">
-                        {rootCat.name}
-                      </h3>
-                    </div>
+// ─── Direct Project Card ──────────────────────────────────────────
 
-                    {/* Project count chip */}
-                    <div className="absolute top-5 right-5 z-10">
-                      <div className="backdrop-blur-md bg-black/40 border border-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] text-white/80">
-                        {rootProjects.length} {rootProjects.length === 1 ? 'Project' : 'Projects'}
-                      </div>
-                    </div>
-                  </div>
+function DirectProjectCard({ project, index }: { project: any; index: number }) {
+  const image = project.image || (project.images && project.images[0]) || '';
 
-                  {/* Content Side — 2 cols */}
-                  <div className={`lg:col-span-2 flex flex-col justify-center p-8 lg:p-12 bg-white/[0.02] ${rootIndex % 2 === 1 ? 'lg:order-1' : ''}`}>
-                    
-                    {/* Large number */}
-                    <span className="text-[100px] font-black text-white/[0.03] leading-none select-none -mb-16">
-                      0{rootIndex + 1}
-                    </span>
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.7, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <Link href={`/portfolio/${project.id}`} className="group block">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-[#0a0a0a]">
+          {image ? (
+            <Image
+              src={getOptimizedUrl(image, 500)}
+              alt={project.title || ''}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="object-cover transition-all duration-[1.2s] ease-[0.16,1,0.3,1] group-hover:scale-105"
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
+              <Layers size={32} className="text-slate-200" />
+            </div>
+          )}
+          {/* Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
 
-                    {/* Root name */}
-                    <h3 className="hidden lg:block text-4xl xl:text-5xl font-black text-white uppercase tracking-tight leading-[0.95] mb-3">
-                      {rootCat.name}
-                    </h3>
-                    
-                    <div className="h-[2px] w-14 bg-accent mb-8" />
-
-                    {/* Subcategories list */}
-                    {hasChildren && (
-                      <div className="space-y-1 mb-8">
-                        {rootCat.children.map((child: any, ci: number) => {
-                          const childNames = getAllDescendantNames(child);
-                          const childCount = projects.filter((p: any) => childNames.includes(p.category?.toString().trim().toUpperCase())).length;
-                          const isDisabled = child.badge === 'قريباً';
-
-                          return (
-                            <div key={child.id}>
-                              <Link 
-                                href={isDisabled ? '#' : `/portfolio?category=${encodeURIComponent(child.name)}`}
-                                className={`flex items-center justify-between py-3 px-3 rounded-sm group/item transition-all duration-300 ${isDisabled ? 'opacity-30 cursor-default' : 'hover:bg-white/[0.05] hover:pl-5'}`}
-                              >
-                                <div className="flex items-center gap-3">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-accent/40 group-hover/item:bg-accent transition-all duration-300" />
-                                  <span className="text-[12px] font-bold uppercase tracking-[0.12em] text-white/50 group-hover/item:text-white transition-colors duration-300">
-                                    {child.name}
-                                  </span>
-                                  {child.badge === 'جديد' && (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[7px] font-black uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 rounded-full">
-                                      <Sparkles size={7} /> NEW
-                                    </span>
-                                  )}
-                                  {child.badge === 'قريباً' && (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[7px] font-black uppercase bg-amber-500/15 text-amber-400 border border-amber-500/20 rounded-full">
-                                      <Clock size={7} /> SOON
-                                    </span>
-                                  )}
-                                </div>
-                                {!isDisabled && (
-                                  <div className="flex items-center gap-2 opacity-0 group-hover/item:opacity-100 transition-all duration-300">
-                                    {childCount > 0 && <span className="text-[10px] font-bold text-white/20">{childCount}</span>}
-                                    <ArrowRight size={10} className="text-accent" />
-                                  </div>
-                                )}
-                              </Link>
-
-                              {/* Grandchildren chips */}
-                              {child.children && child.children.length > 0 && (
-                                <div className="flex flex-wrap gap-1.5 pl-9 pb-2">
-                                  {child.children.map((gc: any) => (
-                                    <Link
-                                      key={gc.id}
-                                      href={`/portfolio?category=${encodeURIComponent(gc.name)}`}
-                                      className="text-[10px] font-bold uppercase tracking-wider text-white/25 hover:text-accent px-2.5 py-1 border border-white/[0.05] hover:border-accent/30 rounded-sm transition-all duration-300"
-                                    >
-                                      {gc.name}
-                                    </Link>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {/* CTA */}
-                    <Link 
-                      href={`/portfolio?category=${encodeURIComponent(rootCat.name)}`}
-                      className="group/cta inline-flex items-center gap-3 text-[12px] font-bold uppercase tracking-[0.3em] text-accent hover:text-white transition-colors duration-500 self-start mt-auto"
-                    >
-                      <span className="border-b border-accent/30 group-hover/cta:border-white pb-1 transition-colors duration-500">
-                        Explore {rootCat.name}
-                      </span>
-                      <ArrowRight size={14} className="group-hover/cta:translate-x-2 transition-transform duration-500" />
-                    </Link>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+          {/* Bottom info */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+            <p className="text-white text-xs font-bold uppercase tracking-wider truncate group-hover:text-accent transition-colors duration-500">
+              {project.title}
+            </p>
+            {project.location && (
+              <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest mt-0.5">{project.location}</p>
+            )}
+          </div>
         </div>
+      </Link>
+    </motion.div>
+  );
+}
 
-        {/* Bottom accent line */}
-        <motion.div 
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
+// ─── Branch Section ───────────────────────────────────────────────
+
+function BranchSection({ rootCat, rootIndex, projects, allImages }: { rootCat: any; rootIndex: number; projects: any[]; allImages: string[] }) {
+  const allNames = getAllDescendantNames(rootCat);
+  const rootProjects = projects.filter((p: any) => {
+    const pCat = p.category?.toString().trim().toUpperCase();
+    return allNames.includes(pCat);
+  });
+
+  const hasChildren = rootCat.children && rootCat.children.length > 0;
+
+  // Hero image
+  const heroProject = rootProjects.find((p: any) => p.isRecommended) || rootProjects[0];
+  let heroImage = heroProject?.image || (heroProject?.images && heroProject.images[0]);
+  if (!heroImage && allImages.length > 0) {
+    heroImage = allImages[rootIndex % allImages.length];
+  }
+
+  const allChildren = hasChildren ? rootCat.children : [];
+  const directProjects = !hasChildren ? rootProjects.slice(0, 8) : [];
+
+  return (
+    <section className="relative py-20 md:py-28 overflow-hidden">
+      {/* Thin separator line */}
+      {rootIndex > 0 && (
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-px bg-border" />
+      )}
+
+      <div className="max-w-[1400px] mx-auto w-full px-6 relative z-10">
+        
+        {/* ═══ Section Header: Clean & Centered ═══ */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-          className="h-[1px] bg-gradient-to-r from-transparent via-accent/30 to-transparent mt-20 origin-left"
-        />
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-14"
+        >
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <span className="h-px w-8 bg-accent/40" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-accent">
+              0{rootIndex + 1}
+            </span>
+            <span className="h-px w-8 bg-accent/40" />
+          </div>
+          <h2 className="text-3xl md:text-5xl font-black tracking-tight uppercase text-primary mb-3">
+            {rootCat.name}
+          </h2>
+          <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-muted">
+            {rootProjects.length} {rootProjects.length === 1 ? 'Project' : 'Projects'}
+          </span>
+        </motion.div>
+
+        {/* ═══ With Children: Grid of Child Categories ═══ */}
+        {hasChildren && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {allChildren.map((child: any, ci: number) => (
+              <ChildCard key={child.id} child={child} projects={projects} index={ci} />
+            ))}
+          </div>
+        )}
+
+        {/* ═══ No Children: Direct Projects Grid ═══ */}
+        {!hasChildren && directProjects.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+            {directProjects.map((project: any, pi: number) => (
+              <DirectProjectCard key={project.id} project={project} index={pi} />
+            ))}
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!hasChildren && directProjects.length === 0 && (
+          <div className="py-16 text-center border border-dashed border-border rounded-xl">
+            <Layers size={36} className="text-muted/15 mx-auto mb-3" />
+            <p className="text-muted tracking-widest text-xs uppercase">No projects yet</p>
+          </div>
+        )}
+
+        {/* ═══ CTA ═══ */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-10 flex justify-center"
+        >
+          <Link
+            href={hasChildren ? `/category/${encodeURIComponent(rootCat.name)}` : `/portfolio?category=${encodeURIComponent(rootCat.name)}`}
+            className="group inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.25em] text-muted hover:text-accent transition-colors duration-500"
+          >
+            <span className="border-b border-current pb-0.5 transition-colors duration-500">
+              Explore {rootCat.name}
+            </span>
+            <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-500" />
+          </Link>
+        </motion.div>
+
       </div>
     </section>
+  );
+}
+
+// ─── Main Export ───────────────────────────────────────────────────
+
+export default function CategorySection() {
+  const { categories, projects } = useSettings();
+
+  const tree = useMemo(() => {
+    if (!categories || categories.length === 0) return [];
+    return buildTree(categories);
+  }, [categories]);
+
+  const allImages = useMemo(() => {
+    if (!projects) return [];
+    return projects
+      .map((p: any) => p.image || (p.images && p.images[0]))
+      .filter(Boolean);
+  }, [projects]);
+
+  if (tree.length === 0 || !projects) return null;
+
+  return (
+    <div>
+      {tree.map((rootCat, rootIndex) => (
+        <BranchSection
+          key={rootCat.id}
+          rootCat={rootCat}
+          rootIndex={rootIndex}
+          projects={projects}
+          allImages={allImages}
+        />
+      ))}
+    </div>
   );
 }

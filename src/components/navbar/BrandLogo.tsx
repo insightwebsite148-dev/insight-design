@@ -31,19 +31,7 @@ export default function BrandLogo({ name, slogan, logo, logoSize = 40 }: BrandLo
                 className="w-auto object-contain transition-all duration-700 group-hover:scale-105 translate-y-[1.5px]" 
               />
             </EditableWrapper>
-            {slogan && (
-              <EditableWrapper
-                collection="settings"
-                documentId="general"
-                field="brandSlogan"
-                value={slogan}
-                type="text"
-              >
-                <p className="text-[6px] lg:text-[7px] font-black tracking-normal text-black uppercase mt-2 border-t border-black/10 pt-1 w-full text-center">
-                  {slogan}
-                </p>
-              </EditableWrapper>
-            )}
+
           </div>
         ) : (
           <div className="flex flex-col">
